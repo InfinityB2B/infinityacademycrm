@@ -14,6 +14,217 @@ export type Database = {
   }
   public: {
     Tables: {
+      contacts: {
+        Row: {
+          company: string | null
+          contactid: string
+          createdat: string
+          email: string | null
+          firstname: string
+          importedby: string | null
+          isclient: boolean
+          lastname: string
+          phone: string | null
+        }
+        Insert: {
+          company?: string | null
+          contactid?: string
+          createdat?: string
+          email?: string | null
+          firstname: string
+          importedby?: string | null
+          isclient?: boolean
+          lastname: string
+          phone?: string | null
+        }
+        Update: {
+          company?: string | null
+          contactid?: string
+          createdat?: string
+          email?: string | null
+          firstname?: string
+          importedby?: string | null
+          isclient?: boolean
+          lastname?: string
+          phone?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_contacts_imported_by"
+            columns: ["importedby"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["userid"]
+          },
+        ]
+      }
+      deals: {
+        Row: {
+          contactid: string | null
+          createdat: string
+          dealid: string
+          dealtitle: string
+          dealvalue: number | null
+          lostat: string | null
+          lostreason: string | null
+          ownerid: string | null
+          pipelineid: string
+          stageid: string
+          status: Database["public"]["Enums"]["deal_status"]
+          wonat: string | null
+        }
+        Insert: {
+          contactid?: string | null
+          createdat?: string
+          dealid?: string
+          dealtitle: string
+          dealvalue?: number | null
+          lostat?: string | null
+          lostreason?: string | null
+          ownerid?: string | null
+          pipelineid: string
+          stageid: string
+          status?: Database["public"]["Enums"]["deal_status"]
+          wonat?: string | null
+        }
+        Update: {
+          contactid?: string | null
+          createdat?: string
+          dealid?: string
+          dealtitle?: string
+          dealvalue?: number | null
+          lostat?: string | null
+          lostreason?: string | null
+          ownerid?: string | null
+          pipelineid?: string
+          stageid?: string
+          status?: Database["public"]["Enums"]["deal_status"]
+          wonat?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_deals_contact"
+            columns: ["contactid"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["contactid"]
+          },
+          {
+            foreignKeyName: "fk_deals_owner"
+            columns: ["ownerid"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["userid"]
+          },
+          {
+            foreignKeyName: "fk_deals_pipeline"
+            columns: ["pipelineid"]
+            isOneToOne: false
+            referencedRelation: "pipelines"
+            referencedColumns: ["pipelineid"]
+          },
+          {
+            foreignKeyName: "fk_deals_stage"
+            columns: ["stageid"]
+            isOneToOne: false
+            referencedRelation: "stages"
+            referencedColumns: ["stageid"]
+          },
+        ]
+      }
+      dealtags: {
+        Row: {
+          dealid: string
+          tagid: string
+        }
+        Insert: {
+          dealid: string
+          tagid: string
+        }
+        Update: {
+          dealid?: string
+          tagid?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_deal_tags_deal"
+            columns: ["dealid"]
+            isOneToOne: false
+            referencedRelation: "deals"
+            referencedColumns: ["dealid"]
+          },
+          {
+            foreignKeyName: "fk_deal_tags_tag"
+            columns: ["tagid"]
+            isOneToOne: false
+            referencedRelation: "tags"
+            referencedColumns: ["tagid"]
+          },
+        ]
+      }
+      expensecategories: {
+        Row: {
+          categoryid: string
+          categoryname: string
+          iseditable: boolean
+        }
+        Insert: {
+          categoryid?: string
+          categoryname: string
+          iseditable?: boolean
+        }
+        Update: {
+          categoryid?: string
+          categoryname?: string
+          iseditable?: boolean
+        }
+        Relationships: []
+      }
+      expenses: {
+        Row: {
+          amount: number
+          categoryid: string
+          createdat: string
+          description: string
+          expensedate: string
+          expenseid: string
+          recordedby: string
+        }
+        Insert: {
+          amount: number
+          categoryid: string
+          createdat?: string
+          description: string
+          expensedate: string
+          expenseid?: string
+          recordedby: string
+        }
+        Update: {
+          amount?: number
+          categoryid?: string
+          createdat?: string
+          description?: string
+          expensedate?: string
+          expenseid?: string
+          recordedby?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_expenses_category"
+            columns: ["categoryid"]
+            isOneToOne: false
+            referencedRelation: "expensecategories"
+            referencedColumns: ["categoryid"]
+          },
+          {
+            foreignKeyName: "fk_expenses_recorded_by"
+            columns: ["recordedby"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["userid"]
+          },
+        ]
+      }
       funnels: {
         Row: {
           content: Json | null
@@ -41,6 +252,239 @@ export type Database = {
         }
         Relationships: []
       }
+      goals: {
+        Row: {
+          createdat: string
+          enddate: string
+          goalid: string
+          metric: Database["public"]["Enums"]["goal_metric"]
+          startdate: string
+          targetteam: string | null
+          targetuser: string | null
+          targetvalue: number
+        }
+        Insert: {
+          createdat?: string
+          enddate: string
+          goalid?: string
+          metric: Database["public"]["Enums"]["goal_metric"]
+          startdate: string
+          targetteam?: string | null
+          targetuser?: string | null
+          targetvalue: number
+        }
+        Update: {
+          createdat?: string
+          enddate?: string
+          goalid?: string
+          metric?: Database["public"]["Enums"]["goal_metric"]
+          startdate?: string
+          targetteam?: string | null
+          targetuser?: string | null
+          targetvalue?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_goals_target_team"
+            columns: ["targetteam"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["teamid"]
+          },
+          {
+            foreignKeyName: "fk_goals_target_user"
+            columns: ["targetuser"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["userid"]
+          },
+        ]
+      }
+      pipelines: {
+        Row: {
+          createdat: string
+          iseditable: boolean
+          pipelineid: string
+          pipelinename: string
+          pipelinetype: Database["public"]["Enums"]["pipeline_type"]
+        }
+        Insert: {
+          createdat?: string
+          iseditable?: boolean
+          pipelineid?: string
+          pipelinename: string
+          pipelinetype: Database["public"]["Enums"]["pipeline_type"]
+        }
+        Update: {
+          createdat?: string
+          iseditable?: boolean
+          pipelineid?: string
+          pipelinename?: string
+          pipelinetype?: Database["public"]["Enums"]["pipeline_type"]
+        }
+        Relationships: []
+      }
+      stages: {
+        Row: {
+          createdat: string
+          pipelineid: string
+          stageid: string
+          stagename: string
+          stageorder: number
+        }
+        Insert: {
+          createdat?: string
+          pipelineid: string
+          stageid?: string
+          stagename: string
+          stageorder: number
+        }
+        Update: {
+          createdat?: string
+          pipelineid?: string
+          stageid?: string
+          stagename?: string
+          stageorder?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_stages_pipeline"
+            columns: ["pipelineid"]
+            isOneToOne: false
+            referencedRelation: "pipelines"
+            referencedColumns: ["pipelineid"]
+          },
+        ]
+      }
+      tags: {
+        Row: {
+          tagcolor: string
+          tagid: string
+          tagname: string
+        }
+        Insert: {
+          tagcolor: string
+          tagid?: string
+          tagname: string
+        }
+        Update: {
+          tagcolor?: string
+          tagid?: string
+          tagname?: string
+        }
+        Relationships: []
+      }
+      teams: {
+        Row: {
+          createdat: string
+          ownerid: string | null
+          teamid: string
+          teamname: string
+        }
+        Insert: {
+          createdat?: string
+          ownerid?: string | null
+          teamid?: string
+          teamname: string
+        }
+        Update: {
+          createdat?: string
+          ownerid?: string | null
+          teamid?: string
+          teamname?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_teams_owner"
+            columns: ["ownerid"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["userid"]
+          },
+        ]
+      }
+      users: {
+        Row: {
+          createdat: string
+          email: string
+          firstname: string
+          lastname: string
+          passwordhash: string
+          profilepictureurl: string | null
+          roleid: string | null
+          teamid: string | null
+          userid: string
+        }
+        Insert: {
+          createdat?: string
+          email: string
+          firstname: string
+          lastname: string
+          passwordhash: string
+          profilepictureurl?: string | null
+          roleid?: string | null
+          teamid?: string | null
+          userid?: string
+        }
+        Update: {
+          createdat?: string
+          email?: string
+          firstname?: string
+          lastname?: string
+          passwordhash?: string
+          profilepictureurl?: string | null
+          roleid?: string | null
+          teamid?: string | null
+          userid?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_users_team"
+            columns: ["teamid"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["teamid"]
+          },
+        ]
+      }
+      webhooks: {
+        Row: {
+          createdat: string
+          event: string
+          isactive: boolean
+          linkedpipelineid: string | null
+          targeturl: string
+          webhookid: string
+          webhookname: string
+        }
+        Insert: {
+          createdat?: string
+          event: string
+          isactive?: boolean
+          linkedpipelineid?: string | null
+          targeturl: string
+          webhookid?: string
+          webhookname: string
+        }
+        Update: {
+          createdat?: string
+          event?: string
+          isactive?: boolean
+          linkedpipelineid?: string | null
+          targeturl?: string
+          webhookid?: string
+          webhookname?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_webhooks_pipeline"
+            columns: ["linkedpipelineid"]
+            isOneToOne: false
+            referencedRelation: "pipelines"
+            referencedColumns: ["pipelineid"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -49,7 +493,9 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      deal_status: "OPEN" | "WON" | "LOST"
+      goal_metric: "REVENUE" | "DEALS_WON" | "APPOINTMENTS_SCHEDULED"
+      pipeline_type: "PROSPECTING" | "SALES" | "POST_SALES"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -176,6 +622,10 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      deal_status: ["OPEN", "WON", "LOST"],
+      goal_metric: ["REVENUE", "DEALS_WON", "APPOINTMENTS_SCHEDULED"],
+      pipeline_type: ["PROSPECTING", "SALES", "POST_SALES"],
+    },
   },
 } as const
