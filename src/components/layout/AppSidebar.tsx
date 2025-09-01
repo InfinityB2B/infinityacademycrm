@@ -62,18 +62,19 @@ export function AppSidebar() {
             <SidebarMenu>
               {navigationItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <NavLink 
-                      to={item.url} 
-                      end 
-                      className={({ isActive }) => getNavCls({ isActive })}
-                    >
-                      <div className="flex items-center">
-                        <item.icon className="h-5 w-5" />
-                        {!isCollapsed && <span className="ml-3">{item.title}</span>}
-                      </div>
-                    </NavLink>
-                  </SidebarMenuButton>
+                  <NavLink to={item.url} end>
+                    {({ isActive }) => (
+                      <SidebarMenuButton
+                        isActive={isActive}
+                        className={getNavCls({ isActive })}
+                      >
+                        <div className="flex items-center">
+                          <item.icon className="h-5 w-5" />
+                          {!isCollapsed && <span className="ml-3">{item.title}</span>}
+                        </div>
+                      </SidebarMenuButton>
+                    )}
+                  </NavLink>
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
