@@ -55,26 +55,23 @@ export function AppSidebar() {
 
         <SidebarGroup className="px-4 py-6">
           <SidebarGroupLabel className="text-sidebar-foreground/60 text-xs uppercase tracking-wider mb-4">
-            {!isCollapsed && "Navegação"}
+            Navegação
           </SidebarGroupLabel>
 
           <SidebarGroupContent>
             <SidebarMenu>
               {navigationItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <NavLink to={item.url} end>
-                    {({ isActive }) => (
-                      <SidebarMenuButton
-                        isActive={isActive}
-                        className={getNavCls({ isActive })}
-                      >
-                        <div className="flex items-center">
-                          <item.icon className="h-5 w-5" />
-                          {!isCollapsed && <span className="ml-3">{item.title}</span>}
-                        </div>
-                      </SidebarMenuButton>
-                    )}
-                  </NavLink>
+                  <SidebarMenuButton asChild>
+                    <NavLink 
+                      to={item.url} 
+                      end 
+                      className={({ isActive }) => `${getNavCls({ isActive })} flex items-center`}
+                    >
+                      <item.icon className="h-5 w-5" />
+                      <span className={`ml-3 ${isCollapsed ? 'sr-only' : ''}`}>{item.title}</span>
+                    </NavLink>
+                  </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
