@@ -8,7 +8,6 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
@@ -23,11 +22,9 @@ const navigationItems = [
 export function AppSidebar() {
   const { state } = useSidebar()
   const location = useLocation()
-  const currentPath = location.pathname
 
   const isCollapsed = state === "collapsed"
-  const isActive = (path: string) => currentPath === path
-  const getNavCls = ({ isActive }: { isActive: boolean }) =>
+  const getNavCls = (isActive: boolean) =>
     isActive 
       ? "bg-sidebar-accent text-sidebar-primary font-medium shadow-glow" 
       : "hover:bg-sidebar-accent/50 text-sidebar-foreground"
@@ -38,18 +35,15 @@ export function AppSidebar() {
       collapsible="icon"
     >
       <SidebarContent>
-        {/* Brand Header */}
         <div className="p-6 border-b border-sidebar-border">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-gradient-primary flex items-center justify-center">
               <TrendingUp className="w-4 h-4 text-white" />
             </div>
-            {!isCollapsed && (
-              <div>
-                <h1 className="text-lg font-semibold text-sidebar-foreground">Infinity</h1>
-                <p className="text-sm text-sidebar-foreground/60">Academy CRM</p>
-              </div>
-            )}
+            <div className={isCollapsed ? "sr-only" : ""}>
+              <h1 className="text-lg font-semibold text-sidebar-foreground">Infinity</h1>
+              <p className="text-sm text-sidebar-foreground/60">Academy CRM</p>
+            </div>
           </div>
         </div>
 
@@ -60,18 +54,19 @@ export function AppSidebar() {
 
           <SidebarGroupContent>
             <SidebarMenu>
-              {navigationItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <NavLink to={item.url} end className="block">
-                    {({ isActive }) => (
-                      <div className={`${getNavCls({ isActive })} flex items-center p-2 rounded-md transition-colors`}>
+              {navigationItems.map((item) => {
+                const isActive = location.pathname === item.url
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <NavLink to={item.url} end>
+                      <div className={`${getNavCls(isActive)} flex items-center p-2 rounded-md transition-colors`}>
                         <item.icon className="h-5 w-5" />
                         <span className={`ml-3 ${isCollapsed ? 'sr-only' : ''}`}>{item.title}</span>
                       </div>
-                    )}
-                  </NavLink>
-                </SidebarMenuItem>
-              ))}
+                    </NavLink>
+                  </SidebarMenuItem>
+                )
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
