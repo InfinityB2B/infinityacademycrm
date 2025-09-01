@@ -18,10 +18,8 @@ export function AppLayout({ children }: AppLayoutProps) {
           {/* Top Header */}
           <header className="h-16 flex items-center justify-between px-6 border-b border-border bg-card/50 backdrop-blur-sm">
             <div className="flex items-center gap-4">
-              <SidebarTrigger asChild>
-                <Button variant="ghost" size="sm" className="hover:bg-muted">
-                  <Menu className="h-4 w-4" />
-                </Button>
+              <SidebarTrigger className="hover:bg-muted p-2 rounded-md">
+                <Menu className="h-4 w-4" />
               </SidebarTrigger>
               <div className="h-6 w-px bg-border" />
             </div>
