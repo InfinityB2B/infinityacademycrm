@@ -68,8 +68,10 @@ export function AppSidebar() {
                       end 
                       className={getNavCls}
                     >
-                      <item.icon className="h-5 w-5" />
-                      {!isCollapsed && <span className="ml-3">{item.title}</span>}
+                      <div className="flex items-center">
+                        <item.icon className="h-5 w-5" />
+                        {!isCollapsed && <span className="ml-3">{item.title}</span>}
+                      </div>
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
