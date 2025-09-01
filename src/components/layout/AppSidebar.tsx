@@ -66,7 +66,7 @@ export function AppSidebar() {
                     <NavLink 
                       to={item.url} 
                       end 
-                      className={getNavCls}
+                      className={({ isActive }) => getNavCls({ isActive })}
                     >
                       <div className="flex items-center">
                         <item.icon className="h-5 w-5" />
