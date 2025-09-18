@@ -1,4 +1,4 @@
-import { BarChart3, Home, Settings, Workflow, TrendingUp } from "lucide-react"
+import { BarChart3, Home, Settings, Workflow, TrendingUp, Users, UserCheck, Target, Webhook } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
 
 import {
@@ -15,7 +15,12 @@ import {
 const navigationItems = [
   { title: "Dashboard", url: "/dashboard", icon: Home },
   { title: "Funis", url: "/pipelines", icon: Workflow },
+  { title: "Leads", url: "/leads", icon: Users },
+  { title: "Equipe", url: "/sales-team", icon: UserCheck },
+  { title: "Financeiro", url: "/financial", icon: TrendingUp },
+  { title: "Metas", url: "/goals", icon: Target },
   { title: "Relatórios", url: "/reports", icon: BarChart3 },
+  { title: "Webhooks", url: "/webhooks", icon: Webhook },
   { title: "Configurações", url: "/settings", icon: Settings },
 ]
 
