@@ -15,7 +15,7 @@ import {
 const navigationItems = [
   { title: "Dashboard", url: "/dashboard", icon: Home },
   { title: "Funis", url: "/pipelines", icon: Workflow },
-  { title: "Leads", url: "/leads", icon: Users },
+  { title: "Deals", url: "/leads", icon: Users },
   { title: "Equipe", url: "/sales-team", icon: UserCheck },
   { title: "Financeiro", url: "/financial", icon: TrendingUp },
   { title: "Metas", url: "/goals", icon: Target },

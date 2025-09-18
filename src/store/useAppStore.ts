@@ -1,16 +1,19 @@
 import { create } from 'zustand';
 import { toast } from 'sonner';
 
-interface Lead {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  company?: string;
-  value: number;
-  status: string;
-  assignedTo: string;
-  createdAt: Date;
+interface Deal {
+  dealid: string;
+  dealtitle: string;
+  dealvalue: number;
+  status: 'OPEN' | 'WON' | 'LOST';
+  contactid?: string;
+  ownerid?: string;
+  stageid: string;
+  pipelineid: string;
+  wonat?: Date;
+  lostat?: Date;
+  lostreason?: string;
+  createdat: Date;
 }
 
 interface Task {
@@ -25,92 +28,94 @@ interface Task {
 }
 
 interface Goal {
-  id: string;
-  title: string;
-  description?: string;
-  targetValue: number;
-  currentValue: number;
-  deadline: Date;
-  assignedTo: string;
-  createdAt: Date;
+  goalid: string;
+  targetuser?: string;
+  targetteam?: string;
+  metric: 'REVENUE' | 'DEALS_WON' | 'APPOINTMENTS_SCHEDULED';
+  targetvalue: number;
+  startdate: string;
+  enddate: string;
+  createdat: Date;
 }
 
-interface SalesPerson {
-  id: string;
-  name: string;
+interface User {
+  userid: string;
+  firstname: string;
+  lastname: string;
   email: string;
-  role: string;
-  team?: string;
-  performance: number;
-  targets: number;
-  createdAt: Date;
+  passwordhash: string;
+  profilepictureurl?: string;
+  roleid?: string;
+  teamid?: string;
+  createdat: Date;
 }
 
 interface AppState {
-  leads: Lead[];
+  deals: Deal[];
   tasks: Task[];
   goals: Goal[];
-  salesTeam: SalesPerson[];
+  users: User[];
 }
 
 interface AppActions {
-  // Lead actions
-  addLead: (lead: Omit<Lead, 'id' | 'createdAt'>) => void;
-  updateLead: (id: string, lead: Partial<Lead>) => void;
-  deleteLead: (id: string) => void;
+  // Deal actions
+  addDeal: (deal: Omit<Deal, 'dealid' | 'createdat'>) => void;
+  updateDeal: (dealid: string, updates: Partial<Deal>) => void;
+  deleteDeal: (dealid: string) => void;
   
   // Task actions
   addTask: (task: Omit<Task, 'id' | 'createdAt'>) => void;
-  updateTask: (id: string, task: Partial<Task>) => void;
+  updateTask: (id: string, updates: Partial<Task>) => void;
   deleteTask: (id: string) => void;
   
   // Goal actions
-  addGoal: (goal: Omit<Goal, 'id' | 'createdAt'>) => void;
-  updateGoal: (id: string, goal: Partial<Goal>) => void;
-  deleteGoal: (id: string) => void;
+  addGoal: (goal: Omit<Goal, 'goalid' | 'createdat'>) => void;
+  updateGoal: (goalid: string, updates: Partial<Goal>) => void;
+  deleteGoal: (goalid: string) => void;
   
-  // Sales person actions
-  addSalesPerson: (person: Omit<SalesPerson, 'id' | 'createdAt'>) => void;
-  updateSalesPerson: (id: string, person: Partial<SalesPerson>) => void;
-  deleteSalesPerson: (id: string) => void;
+  // User actions
+  addUser: (user: Omit<User, 'userid' | 'createdat'>) => void;
+  updateUser: (userid: string, updates: Partial<User>) => void;
+  deleteUser: (userid: string) => void;
 }
 
 type AppStore = AppState & AppActions;
 
 export const useAppStore = create<AppStore>((set) => ({
   // Initial state
-  leads: [],
+  deals: [],
   tasks: [],
   goals: [],
-  salesTeam: [],
+  users: [],
 
-  // Lead actions
-  addLead: (lead) =>
-    set((state) => {
-      const newLead: Lead = {
-        ...lead,
-        id: crypto.randomUUID(),
-        createdAt: new Date(),
-      };
-      toast.success('Lead criado com sucesso!');
-      return { leads: [...state.leads, newLead] };
-    }),
+  // Deal actions
+  addDeal: (dealData) => {
+    const newDeal: Deal = {
+      ...dealData,
+      dealid: crypto.randomUUID(),
+      createdat: new Date(),
+    };
+    set((state) => ({
+      deals: [...state.deals, newDeal],
+    }));
+    toast.success('Deal criado com sucesso!');
+  },
 
-  updateLead: (id, updatedLead) =>
-    set((state) => {
-      const leads = state.leads.map((lead) =>
-        lead.id === id ? { ...lead, ...updatedLead } : lead
-      );
-      toast.success('Lead atualizado com sucesso!');
-      return { leads };
-    }),
+  updateDeal: (dealid, updates) => {
+    set((state) => ({
+      deals: state.deals.map((deal) =>
+        deal.dealid === dealid ? { ...deal, ...updates } : deal
+      ),
+    }));
+    toast.success('Deal atualizado!');
+  },
 
-  deleteLead: (id) =>
-    set((state) => {
-      const leads = state.leads.filter((lead) => lead.id !== id);
-      toast.success('Lead removido com sucesso!');
-      return { leads };
-    }),
+  deleteDeal: (dealid) => {
+    set((state) => ({
+      deals: state.deals.filter((deal) => deal.dealid !== dealid),
+    }));
+    toast.success('Deal removido.');
+  },
 
   // Task actions
   addTask: (task) =>
@@ -141,58 +146,60 @@ export const useAppStore = create<AppStore>((set) => ({
     }),
 
   // Goal actions
-  addGoal: (goal) =>
-    set((state) => {
-      const newGoal: Goal = {
-        ...goal,
-        id: crypto.randomUUID(),
-        createdAt: new Date(),
-      };
-      toast.success('Meta criada com sucesso!');
-      return { goals: [...state.goals, newGoal] };
-    }),
+  addGoal: (goalData) => {
+    const newGoal: Goal = {
+      ...goalData,
+      goalid: crypto.randomUUID(),
+      createdat: new Date(),
+    };
+    set((state) => ({
+      goals: [...state.goals, newGoal],
+    }));
+    toast.success('Meta criada com sucesso!');
+  },
 
-  updateGoal: (id, updatedGoal) =>
-    set((state) => {
-      const goals = state.goals.map((goal) =>
-        goal.id === id ? { ...goal, ...updatedGoal } : goal
-      );
-      toast.success('Meta atualizada!');
-      return { goals };
-    }),
+  updateGoal: (goalid, updates) => {
+    set((state) => ({
+      goals: state.goals.map((goal) =>
+        goal.goalid === goalid ? { ...goal, ...updates } : goal
+      ),
+    }));
+    toast.success('Meta atualizada!');
+  },
 
-  deleteGoal: (id) =>
-    set((state) => {
-      const goals = state.goals.filter((goal) => goal.id !== id);
-      toast.success('Meta removida.');
-      return { goals };
-    }),
+  deleteGoal: (goalid) => {
+    set((state) => ({
+      goals: state.goals.filter((goal) => goal.goalid !== goalid),
+    }));
+    toast.success('Meta removida.');
+  },
 
-  // Sales person actions
-  addSalesPerson: (person) =>
-    set((state) => {
-      const newPerson: SalesPerson = {
-        ...person,
-        id: crypto.randomUUID(),
-        createdAt: new Date(),
-      };
-      toast.success('Vendedor adicionado com sucesso!');
-      return { salesTeam: [...state.salesTeam, newPerson] };
-    }),
+  // User actions
+  addUser: (userData) => {
+    const newUser: User = {
+      ...userData,
+      userid: crypto.randomUUID(),
+      createdat: new Date(),
+    };
+    set((state) => ({
+      users: [...state.users, newUser],
+    }));
+    toast.success('Usuário adicionado com sucesso!');
+  },
 
-  updateSalesPerson: (id, updatedPerson) =>
-    set((state) => {
-      const salesTeam = state.salesTeam.map((person) =>
-        person.id === id ? { ...person, ...updatedPerson } : person
-      );
-      toast.success('Vendedor atualizado!');
-      return { salesTeam };
-    }),
+  updateUser: (userid, updates) => {
+    set((state) => ({
+      users: state.users.map((user) =>
+        user.userid === userid ? { ...user, ...updates } : user
+      ),
+    }));
+    toast.success('Usuário atualizado!');
+  },
 
-  deleteSalesPerson: (id) =>
-    set((state) => {
-      const salesTeam = state.salesTeam.filter((person) => person.id !== id);
-      toast.success('Vendedor removido!');
-      return { salesTeam };
-    }),
+  deleteUser: (userid) => {
+    set((state) => ({
+      users: state.users.filter((user) => user.userid !== userid),
+    }));
+    toast.success('Usuário removido.');
+  },
 }));

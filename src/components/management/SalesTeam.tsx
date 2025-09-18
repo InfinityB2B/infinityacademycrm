@@ -2,15 +2,14 @@ import { useState } from "react";
 import { useAppStore } from "@/store/useAppStore";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Plus, UserCheck, Target, Mail } from "lucide-react";
+import { Plus, UserCheck, Mail } from "lucide-react";
 import { EmptyState } from "@/components/ui/empty-state";
 
 export function SalesTeam() {
-  const { salesTeam, addSalesPerson, deleteSalesPerson } = useAppStore();
+  const { users, deleteUser } = useAppStore();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  if (salesTeam.length === 0) {
+  if (users.length === 0) {
     return (
       <div className="container mx-auto p-6">
         <div className="flex justify-between items-center mb-6">
@@ -19,9 +18,9 @@ export function SalesTeam() {
         
         <EmptyState
           icon={<UserCheck size={64} />}
-          title="Nenhum Vendedor Encontrado"
-          description="Adicione membros à sua equipe de vendas para começar a gerenciar performance."
-          actionLabel="Adicionar Vendedor"
+          title="Nenhum Usuário Encontrado"
+          description="Adicione membros à sua equipe para começar a gerenciar."
+          actionLabel="Adicionar Usuário"
           onAction={() => setIsDialogOpen(true)}
         />
       </div>
@@ -34,38 +33,38 @@ export function SalesTeam() {
         <h1 className="text-3xl font-bold text-foreground">Equipe de Vendas</h1>
         <Button onClick={() => setIsDialogOpen(true)}>
           <Plus className="w-4 h-4 mr-2" />
-          Adicionar Vendedor
+          Adicionar Usuário
         </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {salesTeam.map((person) => (
-          <Card key={person.id} className="bg-card border-border">
+        {users.map((user) => (
+          <Card key={user.userid} className="bg-card border-border">
             <CardHeader>
-              <CardTitle className="text-card-foreground">{person.name}</CardTitle>
-              <Badge variant="outline">{person.role}</Badge>
+              <div className="flex justify-between items-start">
+                <div>
+                  <CardTitle className="text-card-foreground">{user.firstname} {user.lastname}</CardTitle>
+                  <p className="text-sm text-muted-foreground mt-1">{user.email}</p>
+                  <p className="text-xs text-muted-foreground">ID: {user.userid.slice(0, 8)}...</p>
+                </div>
+                <Button 
+                  variant="destructive" 
+                  size="sm"
+                  onClick={() => deleteUser(user.userid)}
+                >
+                  Remover
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Mail className="w-4 h-4" />
-                  {person.email}
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">Team ID:</span>
+                  <span className="font-semibold">{user.teamid || 'N/A'}</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <Target className="w-4 h-4" />
-                  <span>Performance: {person.performance}%</span>
-                </div>
-                <div className="flex justify-between items-center mt-4">
-                  <span className="text-sm font-medium">
-                    Meta: R$ {person.targets.toLocaleString('pt-BR')}
-                  </span>
-                  <Button 
-                    variant="destructive" 
-                    size="sm"
-                    onClick={() => deleteSalesPerson(person.id)}
-                  >
-                    Remover
-                  </Button>
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">Role ID:</span>
+                  <span className="font-semibold">{user.roleid || 'N/A'}</span>
                 </div>
               </div>
             </CardContent>
