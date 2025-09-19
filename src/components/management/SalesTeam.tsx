@@ -1,15 +1,51 @@
 import { useState } from "react";
-import { useAppStore } from "@/store/useAppStore";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, UserCheck, Mail } from "lucide-react";
+import { Plus, UserCheck, Loader2, AlertCircle } from "lucide-react";
 import { EmptyState } from "@/components/ui/empty-state";
+import { useSalesTeam, useDeleteSalesPerson } from "@/hooks/useSalesTeam";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export function SalesTeam() {
-  const { users, deleteUser } = useAppStore();
+  const { data: users, isLoading, isError, error } = useSalesTeam();
+  const deleteSalesPersonMutation = useDeleteSalesPerson();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  if (users.length === 0) {
+  if (isLoading) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold text-foreground">Equipe de Vendas</h1>
+        </div>
+        
+        <div className="flex items-center justify-center py-8">
+          <div className="text-center">
+            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
+            <p className="text-muted-foreground">Carregando equipe de vendas...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold text-foreground">Equipe de Vendas</h1>
+        </div>
+        
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            Erro ao carregar a equipe de vendas: {error?.message || 'Erro desconhecido'}
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
+
+  if (!users || users.length === 0) {
     return (
       <div className="container mx-auto p-6">
         <div className="flex justify-between items-center mb-6">
@@ -26,6 +62,10 @@ export function SalesTeam() {
       </div>
     );
   }
+
+  const handleDeleteUser = (userid: string) => {
+    deleteSalesPersonMutation.mutate(userid);
+  };
 
   return (
     <div className="container mx-auto p-6">
@@ -50,9 +90,14 @@ export function SalesTeam() {
                 <Button 
                   variant="destructive" 
                   size="sm"
-                  onClick={() => deleteUser(user.userid)}
+                  onClick={() => handleDeleteUser(user.userid)}
+                  disabled={deleteSalesPersonMutation.isPending}
                 >
-                  Remover
+                  {deleteSalesPersonMutation.isPending ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    'Remover'
+                  )}
                 </Button>
               </div>
             </CardHeader>
@@ -65,6 +110,12 @@ export function SalesTeam() {
                 <div className="flex justify-between">
                   <span className="text-sm text-muted-foreground">Role ID:</span>
                   <span className="font-semibold">{user.roleid || 'N/A'}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">Criado em:</span>
+                  <span className="font-semibold text-xs">
+                    {new Date(user.createdat).toLocaleDateString('pt-BR')}
+                  </span>
                 </div>
               </div>
             </CardContent>

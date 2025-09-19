@@ -38,23 +38,10 @@ interface Goal {
   createdat: Date;
 }
 
-interface User {
-  userid: string;
-  firstname: string;
-  lastname: string;
-  email: string;
-  passwordhash: string;
-  profilepictureurl?: string;
-  roleid?: string;
-  teamid?: string;
-  createdat: Date;
-}
-
 interface AppState {
   deals: Deal[];
   tasks: Task[];
   goals: Goal[];
-  users: User[];
 }
 
 interface AppActions {
@@ -72,11 +59,6 @@ interface AppActions {
   addGoal: (goal: Omit<Goal, 'goalid' | 'createdat'>) => void;
   updateGoal: (goalid: string, updates: Partial<Goal>) => void;
   deleteGoal: (goalid: string) => void;
-  
-  // User actions
-  addUser: (user: Omit<User, 'userid' | 'createdat'>) => void;
-  updateUser: (userid: string, updates: Partial<User>) => void;
-  deleteUser: (userid: string) => void;
 }
 
 type AppStore = AppState & AppActions;
@@ -86,7 +68,6 @@ export const useAppStore = create<AppStore>((set) => ({
   deals: [],
   tasks: [],
   goals: [],
-  users: [],
 
   // Deal actions
   addDeal: (dealData) => {
@@ -172,34 +153,5 @@ export const useAppStore = create<AppStore>((set) => ({
       goals: state.goals.filter((goal) => goal.goalid !== goalid),
     }));
     toast.success('Meta removida.');
-  },
-
-  // User actions
-  addUser: (userData) => {
-    const newUser: User = {
-      ...userData,
-      userid: crypto.randomUUID(),
-      createdat: new Date(),
-    };
-    set((state) => ({
-      users: [...state.users, newUser],
-    }));
-    toast.success('Usuário adicionado com sucesso!');
-  },
-
-  updateUser: (userid, updates) => {
-    set((state) => ({
-      users: state.users.map((user) =>
-        user.userid === userid ? { ...user, ...updates } : user
-      ),
-    }));
-    toast.success('Usuário atualizado!');
-  },
-
-  deleteUser: (userid) => {
-    set((state) => ({
-      users: state.users.filter((user) => user.userid !== userid),
-    }));
-    toast.success('Usuário removido.');
   },
 }));
