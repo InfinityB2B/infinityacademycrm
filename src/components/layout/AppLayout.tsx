@@ -1,14 +1,27 @@
 import { ReactNode } from "react"
-import { Menu } from "lucide-react"
+import { Menu, LogOut } from "lucide-react"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "./AppSidebar"
 import { Button } from "@/components/ui/button"
+import { useAuth } from "@/hooks/useAuth"
+import { toast } from "sonner"
 
 interface AppLayoutProps {
   children: ReactNode
 }
 
 export function AppLayout({ children }: AppLayoutProps) {
+  const { logout, user } = useAuth()
+
+  const handleLogout = async () => {
+    const { error } = await logout()
+    if (error) {
+      toast.error("Erro ao fazer logout")
+    } else {
+      toast.success("Logout realizado com sucesso")
+    }
+  }
+
   return (
     <SidebarProvider defaultOpen={true}>
       <div className="min-h-screen flex w-full bg-background">
@@ -24,8 +37,19 @@ export function AppLayout({ children }: AppLayoutProps) {
               <div className="h-6 w-px bg-border" />
             </div>
             
-            <div className="text-sm text-muted-foreground">
-              Bem-vindo ao Infinity Academy CRM
+            <div className="flex items-center gap-4">
+              <div className="text-sm text-muted-foreground">
+                Bem-vindo, {user?.email}
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleLogout}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Sair
+              </Button>
             </div>
           </header>
 
