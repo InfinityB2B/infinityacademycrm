@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { useAppStore } from "@/store/useAppStore";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Users, Building2 } from "lucide-react";
+import { Plus, Users, Building2, Loader2, AlertCircle } from "lucide-react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { DealForm } from "@/components/forms/DealForm";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Dialog,
   DialogContent,
@@ -13,15 +13,57 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useDeals, useAddDeal, useDeleteDeal } from "@/hooks/useDeals";
 
 export function DealsManagement() {
-  const { deals, addDeal, updateDeal, deleteDeal } = useAppStore();
+  const { data: deals = [], isLoading, isError, error } = useDeals();
+  const addDealMutation = useAddDeal();
+  const deleteDealMutation = useDeleteDeal();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleAddDeal = (dealData: any) => {
-    addDeal(dealData);
-    setIsDialogOpen(false);
+    addDealMutation.mutate(dealData, {
+      onSuccess: () => setIsDialogOpen(false),
+    });
   };
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="flex justify-between items-center mb-6">
+          <Skeleton className="h-9 w-48" />
+          <Skeleton className="h-10 w-32" />
+        </div>
+        <div className="space-y-4">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} className="h-32 w-full" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold text-foreground">Gestão de Deals</h1>
+        </div>
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <AlertCircle className="h-12 w-12 mx-auto mb-4 text-destructive" />
+            <h3 className="text-lg font-semibold mb-2">Erro ao carregar deals</h3>
+            <p className="text-muted-foreground">
+              {error?.message || 'Ocorreu um erro inesperado.'}
+            </p>
+            <Button className="mt-4" onClick={() => window.location.reload()}>
+              Tentar Novamente
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (deals.length === 0) {
     return (
@@ -99,9 +141,14 @@ export function DealsManagement() {
                   <Button 
                     variant="destructive" 
                     size="sm"
-                    onClick={() => deleteDeal(deal.dealid)}
+                    disabled={deleteDealMutation.isPending}
+                    onClick={() => deleteDealMutation.mutate(deal.dealid)}
                   >
-                    Remover
+                    {deleteDealMutation.isPending ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      'Remover'
+                    )}
                   </Button>
                 </div>
               </div>

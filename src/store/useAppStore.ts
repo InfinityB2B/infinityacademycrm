@@ -1,21 +1,6 @@
 import { create } from 'zustand';
 import { toast } from 'sonner';
 
-interface Deal {
-  dealid: string;
-  dealtitle: string;
-  dealvalue: number;
-  status: 'OPEN' | 'WON' | 'LOST';
-  contactid?: string;
-  ownerid?: string;
-  stageid: string;
-  pipelineid: string;
-  wonat?: Date;
-  lostat?: Date;
-  lostreason?: string;
-  createdat: Date;
-}
-
 interface Task {
   id: string;
   title: string;
@@ -39,17 +24,11 @@ interface Goal {
 }
 
 interface AppState {
-  deals: Deal[];
   tasks: Task[];
   goals: Goal[];
 }
 
 interface AppActions {
-  // Deal actions
-  addDeal: (deal: Omit<Deal, 'dealid' | 'createdat'>) => void;
-  updateDeal: (dealid: string, updates: Partial<Deal>) => void;
-  deleteDeal: (dealid: string) => void;
-  
   // Task actions
   addTask: (task: Omit<Task, 'id' | 'createdAt'>) => void;
   updateTask: (id: string, updates: Partial<Task>) => void;
@@ -65,38 +44,8 @@ type AppStore = AppState & AppActions;
 
 export const useAppStore = create<AppStore>((set) => ({
   // Initial state
-  deals: [],
   tasks: [],
   goals: [],
-
-  // Deal actions
-  addDeal: (dealData) => {
-    const newDeal: Deal = {
-      ...dealData,
-      dealid: crypto.randomUUID(),
-      createdat: new Date(),
-    };
-    set((state) => ({
-      deals: [...state.deals, newDeal],
-    }));
-    toast.success('Deal criado com sucesso!');
-  },
-
-  updateDeal: (dealid, updates) => {
-    set((state) => ({
-      deals: state.deals.map((deal) =>
-        deal.dealid === dealid ? { ...deal, ...updates } : deal
-      ),
-    }));
-    toast.success('Deal atualizado!');
-  },
-
-  deleteDeal: (dealid) => {
-    set((state) => ({
-      deals: state.deals.filter((deal) => deal.dealid !== dealid),
-    }));
-    toast.success('Deal removido.');
-  },
 
   // Task actions
   addTask: (task) =>
