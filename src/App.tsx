@@ -12,6 +12,7 @@ import Pipelines from "./pages/Pipelines";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
+import FinancialManagement from "./pages/FinancialManagement";
 import { DealsManagement } from "./components/management/DealsManagement";
 import { SalesTeam } from "./components/management/SalesTeam";
 import { GoalsManagement } from "./components/management/GoalsManagement";
@@ -31,7 +32,7 @@ const App = () => (
           <Route path="/pipelines" element={<ProtectedRoute><AppLayout><Pipelines /></AppLayout></ProtectedRoute>} />
           <Route path="/leads" element={<ProtectedRoute><AppLayout><DealsManagement /></AppLayout></ProtectedRoute>} />
           <Route path="/sales-team" element={<ProtectedRoute><AppLayout><SalesTeam /></AppLayout></ProtectedRoute>} />
-          <Route path="/financial" element={<ProtectedRoute><AppLayout><div className="p-6"><h1 className="text-3xl font-bold">Financeiro</h1><p className="text-muted-foreground">Módulo em desenvolvimento</p></div></AppLayout></ProtectedRoute>} />
+          <Route path="/financial" element={<ProtectedRoute><AppLayout><FinancialManagement /></AppLayout></ProtectedRoute>} />
           <Route path="/goals" element={<ProtectedRoute><AppLayout><GoalsManagement /></AppLayout></ProtectedRoute>} />
           <Route path="/reports" element={<ProtectedRoute><AppLayout><Reports /></AppLayout></ProtectedRoute>} />
           <Route path="/webhooks" element={<ProtectedRoute><AppLayout><div className="p-6"><h1 className="text-3xl font-bold">Webhooks</h1><p className="text-muted-foreground">Módulo em desenvolvimento</p></div></AppLayout></ProtectedRoute>} />
