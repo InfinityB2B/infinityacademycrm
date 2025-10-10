@@ -1,20 +1,61 @@
 import { useState } from "react";
-import { useAppStore } from "@/store/useAppStore";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Plus, Target, Calendar } from "lucide-react";
+import { Plus, Target, Loader2 } from "lucide-react";
 import { EmptyState } from "@/components/ui/empty-state";
+import { useGoals, useDeleteGoal } from "@/hooks/useGoals";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function GoalsManagement() {
-  const { goals, deleteGoal } = useAppStore();
+  const { data: goals, isLoading, isError } = useGoals();
+  const deleteGoalMutation = useDeleteGoal();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const isOverdue = (enddate: string): boolean => {
     return new Date() > new Date(enddate);
   };
 
-  if (goals.length === 0) {
+  if (isLoading) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold text-foreground">Gestão de Metas</h1>
+        </div>
+        <div className="grid gap-4">
+          {[1, 2, 3].map((i) => (
+            <Card key={i} className="bg-card border-border">
+              <CardHeader>
+                <Skeleton className="h-6 w-48" />
+                <Skeleton className="h-4 w-32 mt-2" />
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-20 w-full" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold text-foreground">Gestão de Metas</h1>
+        </div>
+        <Card className="bg-destructive/10 border-destructive">
+          <CardContent className="pt-6">
+            <p className="text-destructive text-center">
+              Erro ao carregar as metas. Tente novamente mais tarde.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (!goals || goals.length === 0) {
     return (
       <div className="container mx-auto p-6">
         <div className="flex justify-between items-center mb-6">
@@ -54,9 +95,17 @@ export function GoalsManagement() {
                 <Button 
                   variant="destructive" 
                   size="sm"
-                  onClick={() => deleteGoal(goal.goalid)}
+                  onClick={() => deleteGoalMutation.mutate(goal.goalid)}
+                  disabled={deleteGoalMutation.isPending}
                 >
-                  Remover
+                  {deleteGoalMutation.isPending ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Removendo...
+                    </>
+                  ) : (
+                    'Remover'
+                  )}
                 </Button>
               </div>
             </CardHeader>

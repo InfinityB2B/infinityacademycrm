@@ -12,20 +12,8 @@ interface Task {
   createdAt: Date;
 }
 
-interface Goal {
-  goalid: string;
-  targetuser?: string;
-  targetteam?: string;
-  metric: 'REVENUE' | 'DEALS_WON' | 'APPOINTMENTS_SCHEDULED';
-  targetvalue: number;
-  startdate: string;
-  enddate: string;
-  createdat: Date;
-}
-
 interface AppState {
   tasks: Task[];
-  goals: Goal[];
 }
 
 interface AppActions {
@@ -33,11 +21,6 @@ interface AppActions {
   addTask: (task: Omit<Task, 'id' | 'createdAt'>) => void;
   updateTask: (id: string, updates: Partial<Task>) => void;
   deleteTask: (id: string) => void;
-  
-  // Goal actions
-  addGoal: (goal: Omit<Goal, 'goalid' | 'createdat'>) => void;
-  updateGoal: (goalid: string, updates: Partial<Goal>) => void;
-  deleteGoal: (goalid: string) => void;
 }
 
 type AppStore = AppState & AppActions;
@@ -45,7 +28,6 @@ type AppStore = AppState & AppActions;
 export const useAppStore = create<AppStore>((set) => ({
   // Initial state
   tasks: [],
-  goals: [],
 
   // Task actions
   addTask: (task) =>
@@ -74,33 +56,4 @@ export const useAppStore = create<AppStore>((set) => ({
       toast.success('Tarefa removida!');
       return { tasks };
     }),
-
-  // Goal actions
-  addGoal: (goalData) => {
-    const newGoal: Goal = {
-      ...goalData,
-      goalid: crypto.randomUUID(),
-      createdat: new Date(),
-    };
-    set((state) => ({
-      goals: [...state.goals, newGoal],
-    }));
-    toast.success('Meta criada com sucesso!');
-  },
-
-  updateGoal: (goalid, updates) => {
-    set((state) => ({
-      goals: state.goals.map((goal) =>
-        goal.goalid === goalid ? { ...goal, ...updates } : goal
-      ),
-    }));
-    toast.success('Meta atualizada!');
-  },
-
-  deleteGoal: (goalid) => {
-    set((state) => ({
-      goals: state.goals.filter((goal) => goal.goalid !== goalid),
-    }));
-    toast.success('Meta removida.');
-  },
 }));

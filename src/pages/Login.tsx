@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { toast } from "sonner"
 import { useAuth } from "@/hooks/useAuth"
 import { Eye, EyeOff, Loader2 } from "lucide-react"
+import loginBackground from "@/assets/login-background.png"
 
 const loginSchema = z.object({
   email: z.string().email("Email inválido"),
@@ -52,8 +53,14 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="w-full max-w-md space-y-8 p-8">
+    <div className="min-h-screen flex items-center justify-center bg-black relative overflow-hidden">
+      {/* Background Image with Fade Out */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"
+        style={{ backgroundImage: `url(${loginBackground})` }}
+      />
+      
+      <div className="w-full max-w-md space-y-8 p-8 relative z-10">
         <div className="text-center">
           <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
             Infinity Academy CRM
@@ -63,7 +70,7 @@ const Login = () => {
           </p>
         </div>
 
-        <Card className="gradient-card shadow-elevation">
+        <Card className="backdrop-blur-xl bg-card/40 border-border/50 shadow-2xl">
           <form onSubmit={handleSubmit(onSubmit)}>
             <CardHeader>
               <CardTitle>Entrar</CardTitle>
