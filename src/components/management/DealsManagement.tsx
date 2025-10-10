@@ -13,18 +13,49 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useDeals, useAddDeal, useDeleteDeal } from "@/hooks/useDeals";
+import { useDeals, useAddDeal, useUpdateDeal, useDeleteDeal, Deal } from "@/hooks/useDeals";
 
 export function DealsManagement() {
   const { data: deals = [], isLoading, isError, error } = useDeals();
   const addDealMutation = useAddDeal();
+  const updateDealMutation = useUpdateDeal();
   const deleteDealMutation = useDeleteDeal();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingDeal, setEditingDeal] = useState<Deal | null>(null);
 
   const handleAddDeal = (dealData: any) => {
     addDealMutation.mutate(dealData, {
-      onSuccess: () => setIsDialogOpen(false),
+      onSuccess: () => {
+        setIsDialogOpen(false);
+        setEditingDeal(null);
+      },
     });
+  };
+
+  const handleUpdateDeal = (dealData: any) => {
+    if (editingDeal) {
+      updateDealMutation.mutate(
+        { dealid: editingDeal.dealid, updates: dealData },
+        {
+          onSuccess: () => {
+            setIsDialogOpen(false);
+            setEditingDeal(null);
+          },
+        }
+      );
+    }
+  };
+
+  const handleEditClick = (deal: Deal) => {
+    setEditingDeal(deal);
+    setIsDialogOpen(true);
+  };
+
+  const handleDialogClose = (open: boolean) => {
+    setIsDialogOpen(open);
+    if (!open) {
+      setEditingDeal(null);
+    }
   };
 
   if (isLoading) {
@@ -80,12 +111,16 @@ export function DealsManagement() {
           onAction={() => setIsDialogOpen(true)}
         />
 
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <Dialog open={isDialogOpen} onOpenChange={handleDialogClose}>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>Adicionar Novo Deal</DialogTitle>
+              <DialogTitle>{editingDeal ? "Editar Deal" : "Adicionar Novo Deal"}</DialogTitle>
             </DialogHeader>
-            <DealForm onSubmit={handleAddDeal} />
+            <DealForm 
+              onSubmit={editingDeal ? handleUpdateDeal : handleAddDeal}
+              initialData={editingDeal || undefined}
+              isEdit={!!editingDeal}
+            />
           </DialogContent>
         </Dialog>
       </div>
@@ -96,7 +131,7 @@ export function DealsManagement() {
     <div className="container mx-auto p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-foreground">Gestão de Deals</h1>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <Dialog open={isDialogOpen} onOpenChange={handleDialogClose}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="w-4 h-4 mr-2" />
@@ -105,9 +140,13 @@ export function DealsManagement() {
           </DialogTrigger>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>Adicionar Novo Deal</DialogTitle>
+              <DialogTitle>{editingDeal ? "Editar Deal" : "Adicionar Novo Deal"}</DialogTitle>
             </DialogHeader>
-            <DealForm onSubmit={handleAddDeal} />
+            <DealForm 
+              onSubmit={editingDeal ? handleUpdateDeal : handleAddDeal}
+              initialData={editingDeal || undefined}
+              isEdit={!!editingDeal}
+            />
           </DialogContent>
         </Dialog>
       </div>
@@ -135,7 +174,11 @@ export function DealsManagement() {
                   R$ {deal.dealvalue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                 </span>
                 <div className="flex gap-2">
-                  <Button variant="outline" size="sm">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => handleEditClick(deal)}
+                  >
                     Editar
                   </Button>
                   <Button 
