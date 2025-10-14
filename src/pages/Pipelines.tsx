@@ -13,7 +13,9 @@ import {
   closestCenter,
   PointerSensor,
   useSensor,
-  useSensors
+  useSensors,
+  useDroppable,
+  useDraggable
 } from "@dnd-kit/core";
 import { usePipelines, useUpdateDealStage, Deal, Pipeline, Stage } from "@/hooks/usePipelines";
 
@@ -219,7 +221,6 @@ interface DroppableStageProps {
 }
 
 function DroppableStage({ stage }: DroppableStageProps) {
-  const { useDroppable } = require('@dnd-kit/core');
   const { setNodeRef } = useDroppable({
     id: stage.stageid,
   });
@@ -273,7 +274,6 @@ interface DraggableDealProps {
 }
 
 function DraggableDeal({ deal }: DraggableDealProps) {
-  const { useDraggable } = require('@dnd-kit/core');
   const {
     attributes,
     listeners,
