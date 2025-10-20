@@ -50,7 +50,7 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_contacts_imported_by"
+            foreignKeyName: "contacts_importedby_fkey"
             columns: ["importedby"]
             isOneToOne: false
             referencedRelation: "users"
@@ -103,28 +103,28 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_deals_contact"
+            foreignKeyName: "deals_contactid_fkey"
             columns: ["contactid"]
             isOneToOne: false
             referencedRelation: "contacts"
             referencedColumns: ["contactid"]
           },
           {
-            foreignKeyName: "fk_deals_owner"
+            foreignKeyName: "deals_ownerid_fkey"
             columns: ["ownerid"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["userid"]
           },
           {
-            foreignKeyName: "fk_deals_pipeline"
+            foreignKeyName: "deals_pipelineid_fkey"
             columns: ["pipelineid"]
             isOneToOne: false
             referencedRelation: "pipelines"
             referencedColumns: ["pipelineid"]
           },
           {
-            foreignKeyName: "fk_deals_stage"
+            foreignKeyName: "deals_stageid_fkey"
             columns: ["stageid"]
             isOneToOne: false
             referencedRelation: "stages"
@@ -147,14 +147,14 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_deal_tags_deal"
+            foreignKeyName: "dealtags_dealid_fkey"
             columns: ["dealid"]
             isOneToOne: false
             referencedRelation: "deals"
             referencedColumns: ["dealid"]
           },
           {
-            foreignKeyName: "fk_deal_tags_tag"
+            foreignKeyName: "dealtags_tagid_fkey"
             columns: ["tagid"]
             isOneToOne: false
             referencedRelation: "tags"
@@ -210,14 +210,14 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_expenses_category"
+            foreignKeyName: "expenses_categoryid_fkey"
             columns: ["categoryid"]
             isOneToOne: false
             referencedRelation: "expensecategories"
             referencedColumns: ["categoryid"]
           },
           {
-            foreignKeyName: "fk_expenses_recorded_by"
+            foreignKeyName: "expenses_recordedby_fkey"
             columns: ["recordedby"]
             isOneToOne: false
             referencedRelation: "users"
@@ -285,14 +285,14 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_goals_target_team"
+            foreignKeyName: "goals_targetteam_fkey"
             columns: ["targetteam"]
             isOneToOne: false
             referencedRelation: "teams"
             referencedColumns: ["teamid"]
           },
           {
-            foreignKeyName: "fk_goals_target_user"
+            foreignKeyName: "goals_targetuser_fkey"
             columns: ["targetuser"]
             isOneToOne: false
             referencedRelation: "users"
@@ -348,7 +348,7 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_stages_pipeline"
+            foreignKeyName: "stages_pipelineid_fkey"
             columns: ["pipelineid"]
             isOneToOne: false
             referencedRelation: "pipelines"
@@ -439,7 +439,7 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_users_team"
+            foreignKeyName: "users_teamid_fkey"
             columns: ["teamid"]
             isOneToOne: false
             referencedRelation: "teams"
@@ -477,7 +477,7 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_webhooks_pipeline"
+            foreignKeyName: "webhooks_linkedpipelineid_fkey"
             columns: ["linkedpipelineid"]
             isOneToOne: false
             referencedRelation: "pipelines"
