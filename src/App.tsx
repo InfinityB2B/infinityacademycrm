@@ -13,6 +13,7 @@ import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import FinancialManagement from "./pages/FinancialManagement";
+import WebhookSettings from "./pages/WebhookSettings";
 import { DealsManagement } from "./components/management/DealsManagement";
 import { SalesTeam } from "./components/management/SalesTeam";
 import { GoalsManagement } from "./components/management/GoalsManagement";
@@ -35,7 +36,7 @@ const App = () => (
           <Route path="/financial" element={<ProtectedRoute><AppLayout><FinancialManagement /></AppLayout></ProtectedRoute>} />
           <Route path="/goals" element={<ProtectedRoute><AppLayout><GoalsManagement /></AppLayout></ProtectedRoute>} />
           <Route path="/reports" element={<ProtectedRoute><AppLayout><Reports /></AppLayout></ProtectedRoute>} />
-          <Route path="/webhooks" element={<ProtectedRoute><AppLayout><div className="p-6"><h1 className="text-3xl font-bold">Webhooks</h1><p className="text-muted-foreground">Módulo em desenvolvimento</p></div></AppLayout></ProtectedRoute>} />
+          <Route path="/webhooks" element={<ProtectedRoute><AppLayout><WebhookSettings /></AppLayout></ProtectedRoute>} />
           <Route path="/settings" element={<ProtectedRoute><AppLayout><Settings /></AppLayout></ProtectedRoute>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
