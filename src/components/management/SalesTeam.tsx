@@ -11,6 +11,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { SalesPersonForm } from "@/components/forms/SalesPersonForm";
 
 export function SalesTeam() {
@@ -103,18 +114,41 @@ export function SalesTeam() {
                   <p className="text-sm text-muted-foreground mt-1">{user.email}</p>
                   <p className="text-xs text-muted-foreground">ID: {user.userid.slice(0, 8)}...</p>
                 </div>
-                <Button 
-                  variant="destructive" 
-                  size="sm"
-                  onClick={() => handleDeleteUser(user.userid)}
-                  disabled={deleteSalesPersonMutation.isPending}
-                >
-                  {deleteSalesPersonMutation.isPending ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    'Remover'
-                  )}
-                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button 
+                      variant="destructive" 
+                      size="sm"
+                      disabled={deleteSalesPersonMutation.isPending}
+                    >
+                      {deleteSalesPersonMutation.isPending ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        'Remover'
+                      )}
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent className="bg-card border-border">
+                    <AlertDialogHeader>
+                      <AlertDialogTitle className="text-card-foreground">
+                        Confirmar Exclusão
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Tem certeza que deseja excluir o vendedor "{user.firstname} {user.lastname}"?
+                        Esta ação não pode ser desfeita e todos os dados associados a este usuário podem ser afetados.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => handleDeleteUser(user.userid)}
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      >
+                        Excluir
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             </CardHeader>
             <CardContent>
