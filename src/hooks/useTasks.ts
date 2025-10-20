@@ -11,6 +11,10 @@ interface Task {
   duedate?: string;
   priority: 'low' | 'medium' | 'high';
   createdat: string;
+  assignedUser?: {
+    firstname: string;
+    lastname: string;
+  };
 }
 
 type NewTask = Omit<Task, 'taskid' | 'createdat'>;
@@ -28,7 +32,23 @@ export function useTasks() {
         throw new Error(error.message);
       }
 
-      return data as Task[];
+      // Buscar dados do usuário separadamente para cada tarefa
+      const tasksWithUsers = await Promise.all(
+        (data || []).map(async (task) => {
+          const { data: userData } = await supabase
+            .from('users')
+            .select('firstname, lastname')
+            .eq('userid', task.assignedto)
+            .single();
+
+          return {
+            ...task,
+            assignedUser: userData || undefined,
+          };
+        })
+      );
+
+      return tasksWithUsers as Task[];
     },
   });
 }
