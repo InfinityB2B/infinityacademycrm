@@ -110,7 +110,6 @@ export const WebhookForm = ({ onSubmit }: WebhookFormProps) => {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="">Nenhum</SelectItem>
                   {pipelines?.map((pipeline) => (
                     <SelectItem key={pipeline.pipelineid} value={pipeline.pipelineid}>
                       {pipeline.pipelinename}
