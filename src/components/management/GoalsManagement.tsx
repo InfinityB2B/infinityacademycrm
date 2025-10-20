@@ -3,13 +3,29 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, Target, Loader2 } from "lucide-react";
 import { EmptyState } from "@/components/ui/empty-state";
-import { useGoals, useDeleteGoal } from "@/hooks/useGoals";
+import { useGoals, useAddGoal, useDeleteGoal } from "@/hooks/useGoals";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { GoalForm } from "@/components/forms/GoalForm";
 
 export function GoalsManagement() {
   const { data: goals, isLoading, isError } = useGoals();
+  const addGoalMutation = useAddGoal();
   const deleteGoalMutation = useDeleteGoal();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const handleAddGoal = (data: any) => {
+    addGoalMutation.mutate(data, {
+      onSuccess: () => {
+        setIsDialogOpen(false);
+      },
+    });
+  };
 
   const isOverdue = (enddate: string): boolean => {
     return new Date() > new Date(enddate);
@@ -139,6 +155,15 @@ export function GoalsManagement() {
           </Card>
         ))}
       </div>
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Criar Nova Meta</DialogTitle>
+          </DialogHeader>
+          <GoalForm onSubmit={handleAddGoal} />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

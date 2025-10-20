@@ -3,13 +3,29 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, UserCheck, Loader2, AlertCircle } from "lucide-react";
 import { EmptyState } from "@/components/ui/empty-state";
-import { useSalesTeam, useDeleteSalesPerson } from "@/hooks/useSalesTeam";
+import { useSalesTeam, useAddSalesPerson, useDeleteSalesPerson } from "@/hooks/useSalesTeam";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { SalesPersonForm } from "@/components/forms/SalesPersonForm";
 
 export function SalesTeam() {
   const { data: users, isLoading, isError, error } = useSalesTeam();
+  const addSalesPersonMutation = useAddSalesPerson();
   const deleteSalesPersonMutation = useDeleteSalesPerson();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const handleAddSalesPerson = (data: any) => {
+    addSalesPersonMutation.mutate(data, {
+      onSuccess: () => {
+        setIsDialogOpen(false);
+      },
+    });
+  };
 
   if (isLoading) {
     return (
@@ -122,6 +138,15 @@ export function SalesTeam() {
           </Card>
         ))}
       </div>
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Adicionar Novo Vendedor</DialogTitle>
+          </DialogHeader>
+          <SalesPersonForm onSubmit={handleAddSalesPerson} />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
