@@ -374,6 +374,39 @@ export type Database = {
         }
         Relationships: []
       }
+      tasks: {
+        Row: {
+          assignedto: string
+          completed: boolean
+          createdat: string
+          description: string | null
+          duedate: string | null
+          priority: Database["public"]["Enums"]["task_priority"]
+          taskid: string
+          title: string
+        }
+        Insert: {
+          assignedto: string
+          completed?: boolean
+          createdat?: string
+          description?: string | null
+          duedate?: string | null
+          priority?: Database["public"]["Enums"]["task_priority"]
+          taskid?: string
+          title: string
+        }
+        Update: {
+          assignedto?: string
+          completed?: boolean
+          createdat?: string
+          description?: string | null
+          duedate?: string | null
+          priority?: Database["public"]["Enums"]["task_priority"]
+          taskid?: string
+          title?: string
+        }
+        Relationships: []
+      }
       teams: {
         Row: {
           createdat: string
@@ -496,6 +529,7 @@ export type Database = {
       deal_status: "OPEN" | "WON" | "LOST"
       goal_metric: "REVENUE" | "DEALS_WON" | "APPOINTMENTS_SCHEDULED"
       pipeline_type: "PROSPECTING" | "SALES" | "POST_SALES"
+      task_priority: "low" | "medium" | "high"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -626,6 +660,7 @@ export const Constants = {
       deal_status: ["OPEN", "WON", "LOST"],
       goal_metric: ["REVENUE", "DEALS_WON", "APPOINTMENTS_SCHEDULED"],
       pipeline_type: ["PROSPECTING", "SALES", "POST_SALES"],
+      task_priority: ["low", "medium", "high"],
     },
   },
 } as const
