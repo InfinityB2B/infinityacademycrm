@@ -127,9 +127,6 @@ export function TasksManagement() {
             <CardContent>
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                  <span>
-                    Responsável: {task.users ? `${task.users.firstname} ${task.users.lastname}` : 'N/A'}
-                  </span>
                   {task.duedate && (
                     <span className="flex items-center gap-1">
                       <Calendar className="w-4 h-4" />

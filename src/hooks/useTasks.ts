@@ -11,13 +11,9 @@ interface Task {
   duedate?: string;
   priority: 'low' | 'medium' | 'high';
   createdat: string;
-  users?: {
-    firstname: string;
-    lastname: string;
-  };
 }
 
-type NewTask = Omit<Task, 'taskid' | 'createdat' | 'users'>;
+type NewTask = Omit<Task, 'taskid' | 'createdat'>;
 
 export function useTasks() {
   return useQuery({
@@ -25,7 +21,7 @@ export function useTasks() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('tasks')
-        .select('*, users(firstname, lastname)')
+        .select('*')
         .order('createdat', { ascending: false });
 
       if (error) {
