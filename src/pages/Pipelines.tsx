@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, PlusCircle, TrendingUp, AlertCircle } from "lucide-react";
@@ -13,6 +13,7 @@ import {
 import { DealForm } from "@/components/forms/DealForm";
 import { useAddDeal } from "@/hooks/useDeals";
 import { useAuth } from "@/hooks/useAuth";
+import { useDrag } from "@use-gesture/react";
 import { 
   DndContext, 
   DragEndEvent, 
@@ -40,6 +41,7 @@ export default function Pipelines() {
   const [selectedPipeline, setSelectedPipeline] = useState<string>("");
   const [activeDeal, setActiveDeal] = useState<Deal | null>(null);
   const [isAddDealOpen, setIsAddDealOpen] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   
   const { data: pipelines = [], isLoading, isError, error } = usePipelines();
   const updateDealStage = useUpdateDealStage();
@@ -52,6 +54,27 @@ export default function Pipelines() {
         distance: 8,
       },
     })
+  );
+
+  // Configure drag-to-scroll (horizontal only, avoiding conflict with dnd-kit cards)
+  const bind = useDrag(
+    ({ movement: [mx], memo = scrollContainerRef.current?.scrollLeft ?? 0, event }) => {
+      // Only allow scrolling if not dragging a card
+      const target = event?.target as HTMLElement;
+      const isDraggingCard = target?.closest('[data-dnd-kit-draggable]');
+      
+      if (!isDraggingCard && scrollContainerRef.current) {
+        // Subtract movement to scroll in the opposite direction (natural feel)
+        scrollContainerRef.current.scrollLeft = memo - mx;
+      }
+      
+      return memo;
+    },
+    {
+      axis: 'x',
+      filterTaps: true,
+      pointer: { touch: true }
+    }
   );
 
   // Auto-select first pipeline when data loads
@@ -225,7 +248,12 @@ export default function Pipelines() {
 
             {/* Kanban Board */}
             {currentPipeline && (
-              <div className="overflow-x-auto">
+              <div 
+                ref={scrollContainerRef}
+                {...bind()}
+                className="overflow-x-auto overflow-y-hidden scrollbar-hide cursor-grab active:cursor-grabbing"
+                style={{ touchAction: 'pan-y pinch-zoom' }}
+              >
                 <div className="flex gap-6 min-w-max pb-4">
                   {currentPipeline.stages.map((stage) => (
                     <DroppableStage
@@ -345,6 +373,7 @@ function DraggableDeal({ deal }: DraggableDealProps) {
       style={style}
       {...listeners}
       {...attributes}
+      data-dnd-kit-draggable="true"
       className={`${isDragging ? 'opacity-50' : ''}`}
     >
       <DealCard deal={deal} />
