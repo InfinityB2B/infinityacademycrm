@@ -11,6 +11,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { GoalForm } from "@/components/forms/GoalForm";
 
 export function GoalsManagement() {
@@ -108,21 +119,44 @@ export function GoalsManagement() {
                   <CardTitle className="text-card-foreground">Meta {goal.metric}</CardTitle>
                   <p className="text-muted-foreground">Valor alvo: {goal.targetvalue.toLocaleString('pt-BR')}</p>
                 </div>
-                <Button 
-                  variant="destructive" 
-                  size="sm"
-                  onClick={() => deleteGoalMutation.mutate(goal.goalid)}
-                  disabled={deleteGoalMutation.isPending}
-                >
-                  {deleteGoalMutation.isPending ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Removendo...
-                    </>
-                  ) : (
-                    'Remover'
-                  )}
-                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button 
+                      variant="destructive" 
+                      size="sm"
+                      disabled={deleteGoalMutation.isPending}
+                    >
+                      {deleteGoalMutation.isPending ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Removendo...
+                        </>
+                      ) : (
+                        'Remover'
+                      )}
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent className="bg-gradient-card border-border">
+                    <AlertDialogHeader>
+                      <AlertDialogTitle className="text-card-foreground">
+                        Confirmar Exclusão
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Tem certeza que deseja excluir a meta "{goal.metric}"?
+                        Esta ação não pode ser desfeita.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => deleteGoalMutation.mutate(goal.goalid)}
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      >
+                        Excluir
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             </CardHeader>
             <CardContent>

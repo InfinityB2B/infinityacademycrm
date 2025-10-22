@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -46,6 +47,22 @@ export function DealForm({ onSubmit, initialData, isEdit = false }: DealFormProp
       lostreason: initialData?.lostreason || ""
     }
   });
+
+  // Update form when initialData changes (for edit mode)
+  useEffect(() => {
+    if (initialData) {
+      form.reset({
+        dealtitle: initialData.dealtitle || "",
+        dealvalue: initialData.dealvalue || 0,
+        status: initialData.status || DEAL_STATUSES.OPEN,
+        contactid: initialData.contactid || "",
+        ownerid: initialData.ownerid || "",
+        stageid: initialData.stageid || "",
+        pipelineid: initialData.pipelineid || "",
+        lostreason: initialData.lostreason || ""
+      });
+    }
+  }, [initialData, form]);
 
   const handleSubmit = async (data: DealFormData) => {
     try {

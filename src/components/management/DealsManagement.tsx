@@ -13,6 +13,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { useDeals, useAddDeal, useUpdateDeal, useDeleteDeal, Deal } from "@/hooks/useDeals";
 
 export function DealsManagement() {
@@ -181,18 +192,41 @@ export function DealsManagement() {
                   >
                     Editar
                   </Button>
-                  <Button 
-                    variant="destructive" 
-                    size="sm"
-                    disabled={deleteDealMutation.isPending}
-                    onClick={() => deleteDealMutation.mutate(deal.dealid)}
-                  >
-                    {deleteDealMutation.isPending ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      'Remover'
-                    )}
-                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button 
+                        variant="destructive" 
+                        size="sm"
+                        disabled={deleteDealMutation.isPending}
+                      >
+                        {deleteDealMutation.isPending ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          'Remover'
+                        )}
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent className="bg-gradient-card border-border">
+                      <AlertDialogHeader>
+                        <AlertDialogTitle className="text-card-foreground">
+                          Confirmar Exclusão
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Tem certeza que deseja excluir o deal "{deal.dealtitle}"?
+                          Esta ação não pode ser desfeita.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => deleteDealMutation.mutate(deal.dealid)}
+                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        >
+                          Excluir
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               </div>
             </CardContent>

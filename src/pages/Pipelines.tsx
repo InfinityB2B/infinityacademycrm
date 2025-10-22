@@ -4,6 +4,15 @@ import { Badge } from "@/components/ui/badge";
 import { Loader2, PlusCircle, TrendingUp, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { DealForm } from "@/components/forms/DealForm";
+import { useAddDeal } from "@/hooks/useDeals";
+import { useAuth } from "@/hooks/useAuth";
 import { 
   DndContext, 
   DragEndEvent, 
@@ -30,9 +39,12 @@ const formatCurrency = (value?: number) => {
 export default function Pipelines() {
   const [selectedPipeline, setSelectedPipeline] = useState<string>("");
   const [activeDeal, setActiveDeal] = useState<Deal | null>(null);
+  const [isAddDealOpen, setIsAddDealOpen] = useState(false);
   
   const { data: pipelines = [], isLoading, isError, error } = usePipelines();
   const updateDealStage = useUpdateDealStage();
+  const addDealMutation = useAddDeal();
+  const { user } = useAuth();
   
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -48,6 +60,24 @@ export default function Pipelines() {
   }
 
   const currentPipeline = pipelines.find(p => p.pipelineid === selectedPipeline);
+
+  const handleAddDeal = (dealData: any) => {
+    // Get the first stage of the current pipeline
+    const firstStage = currentPipeline?.stages[0];
+    
+    const dealWithDefaults = {
+      ...dealData,
+      ownerid: user?.id,
+      pipelineid: selectedPipeline,
+      stageid: firstStage?.stageid || dealData.stageid,
+    };
+
+    addDealMutation.mutate(dealWithDefaults, {
+      onSuccess: () => {
+        setIsAddDealOpen(false);
+      },
+    });
+  };
 
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
@@ -146,7 +176,11 @@ export default function Pipelines() {
             </p>
           </div>
           
-          <Button className="bg-gradient-primary hover:opacity-90 transition-opacity">
+          <Button 
+            className="bg-gradient-primary hover:opacity-90 transition-opacity"
+            onClick={() => setIsAddDealOpen(true)}
+            disabled={!currentPipeline}
+          >
             <PlusCircle className="h-4 w-4 mr-2" />
             Nova Oportunidade
           </Button>
@@ -211,6 +245,23 @@ export default function Pipelines() {
           <DealCard deal={activeDeal} isDragging />
         ) : null}
       </DragOverlay>
+
+      {/* Add Deal Dialog */}
+      <Dialog open={isAddDealOpen} onOpenChange={setIsAddDealOpen}>
+        <DialogContent className="max-w-2xl bg-gradient-card border-border">
+          <DialogHeader>
+            <DialogTitle className="text-card-foreground">Adicionar Nova Oportunidade</DialogTitle>
+          </DialogHeader>
+          <DealForm 
+            onSubmit={handleAddDeal}
+            initialData={{
+              pipelineid: selectedPipeline,
+              stageid: currentPipeline?.stages[0]?.stageid || "",
+              ownerid: user?.id,
+            }}
+          />
+        </DialogContent>
+      </Dialog>
     </DndContext>
   );
 }
